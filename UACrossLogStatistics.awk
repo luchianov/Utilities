@@ -12,6 +12,16 @@ BEGIN {
 /[0-9]+:[0-9]+:[0-9]+  - Start time: [0-9]+\/[0-9]+\/[0-9]+.*$/{
 	keysPerFile[FILENAME][1] = $5;
 	keysPerFile[FILENAME][2] = $1;
+	keysPerFile[FILENAME][3] = \
+	keysPerFile[FILENAME][4] = \
+	keysPerFile[FILENAME][5] = \
+	keysPerFile[FILENAME][6] = \
+	keysPerFile[FILENAME][7] = \
+	keysPerFile[FILENAME][8] = \
+	keysPerFile[FILENAME][9] = \
+	keysPerFile[FILENAME][10] = \
+	keysPerFile[FILENAME][11] = "";
+	# keysPerFile[FILENAME][12] = FILENAME;
 }
 /[0-9]+:[0-9]+:[0-9]+  -  User Automation Process has completed sucessfully/ {
 	keysPerFile[FILENAME][3] = $1;
@@ -46,7 +56,6 @@ END {
 	{
 		# for(row in keysPerFile[file]) printf row "-" keysPerFile[file][row] ", ";
 		for(row in keysPerFile[file]) printf keysPerFile[file][row] ", ";
-		#printf file "\n";
 		printf "\n";
 	}
 }
