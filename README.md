@@ -1,5 +1,11 @@
 # Utilities
-Variety of utilities supporting CICD
+
+## Team contribution analysis via JIRO API.py
+This utility traverses all the JIRA issues for a particular sprint, and builds an inverted list of contributors, and how active they were during the reported sprint.
+The utility saves all the issues it pulls from JIRA into a local file with a timestamp in its name, for auditing purposes and as a local repository. 
+You can re-run the analysis or build more reporting against those snapshots, later, without spending time and bandwidth on pulling the data from JIRA.
+
+## Variety of utilities supporting CICD
 
 ConfigKeyComparer.awk script, v0.2.2, by Slava Luchianov, 5/14/2021
 The script compares the config files and finds all the keys which were presented in the sample file and were missed in the secondary files
