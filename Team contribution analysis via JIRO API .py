@@ -1,4 +1,5 @@
-# JIRO Sandbox
+# This module analyses the content of the JIRA issues for the given Sprint.
+# It either gets the data from the desired local file, or connects to JIRA API pulling all the issues for the mentioned Sprint. It then 
 
 import requests
 import certifi
@@ -8,6 +9,8 @@ from datetime import datetime
 
 
 def fetch_jira_issues(url, auth, start_at=0, max_results=50):
+    ''' Fetches JIRA issues from the API with pagination.'''
+
     paginated_url = f"{url}&startAt={start_at}&maxResults={max_results}"
     response = requests.get(paginated_url, auth=auth, verify=False)
     print(f"Response lenth: {len(response.text)}")
@@ -18,7 +21,8 @@ def fetch_jira_issues(url, auth, start_at=0, max_results=50):
         exit
 
 def find_names(issue, path='', issue_key=None, name_dict=None, ignore_names=None):
-    '''This recursive method traverses the JIRA Issue JSON content looking for the attribute 'name' and stores it in the dictionary along with the 'path' to that name'''
+    ''' Recursively finds names in the single JIRA issue JSON and stores them in a dictionary, along with the 'Issue Key' and the 'path' to that name. '''
+
     if name_dict is None:
         name_dict = {}
 
@@ -43,21 +47,22 @@ def find_names(issue, path='', issue_key=None, name_dict=None, ignore_names=None
             
 def process_issues(issues_json):
     '''Traverse provided JSON based compound collection of JIRA issues and collect the names with some details about each name'''
+
     # Ensure that 'issues_json' is a dictionary containing an 'issues' key
     if 'issues' not in issues_json:
         raise ValueError("Invalid input: JSON does not contain 'issues' key")
     
     names_dict = {}
-    # traverse issues and collect the names with some details about each name
+    # traverse issues and collect the names
     for issue in issues_json['issues']:
         names_dict.update(find_names(issue))
 
     #region Iterate over all the collected names, printing the details about each name
-    for name, details in names_dict.items():
-        print(f"\nName: {name}")
-        for detail in details:
-            print(f"  Issue Key: {detail['issue_key']}")
-            print(f"  Path: {detail['path']}")
+    # for name, details in names_dict.items():
+    #     print(f"\nName: {name}")
+    #     for detail in details:
+    #         print(f"  Issue Key: {detail['issue_key']}")
+    #         print(f"  Path: {detail['path']}")
     #endregion
 
     # Iterate over the issues
@@ -87,6 +92,8 @@ def save_to_file(data, filename):
         json.dump(data, file)
 
 def analyze_contributors(contributors, my_team):
+    '''Analyzes contributors based on team membership.'''
+
     team_contributions = {member: {} for member in my_team}
 
     for name, details in contributors.items():
@@ -104,13 +111,10 @@ def analyze_contributors(contributors, my_team):
     return team_contributions
 
 def main():
-
-    # https://jira.ceteracorp.com/rest/api/2/search?jql=Sprint='Sprint 153'
-    sprint = "Sprint 153"
-    jira_url = f"https://jira.ceteracorp.com/rest/api/2/search?jql=Sprint='{sprint}'&expand=changelog"
-    #jira_url = "https://jira.ceteracorp.com/rest/api/2/search"
-    auth = (
-'..........', '..............'        ) 
+    sprint = "Sprint 123"
+    # use JQL to frame only the issues from the desired sprint
+    jira_url = f"https://jira.your_company_domain.com/rest/api/2/search?jql=Sprint='{sprint}'&expand=changelog"
+    auth = ('username', 'password')  # Replace with actual credentials
     
     desired_data = 'Issues_20231229_040031.json'  # Replace with your desired file name
 
@@ -139,11 +143,11 @@ def main():
     print(f"The total contributors: {len(contributors)}")
     
     my_team = {
-        "slava.lu@dumb.com", 
-        "Natalia.Zaricinii@cetera.com",
-        "Cody.Watson@cetera.com",
-        "Ilia.Cibotari@cetera.com",
-        "Siva.Krishna@cetera.com",
+        "member.one@your_company_domain.com", 
+        "member.two@your_company_domain.com",
+        "member.three@your_company_domain.com",
+        "member.four@your_company_domain.com",
+        "member.five@your_company_domain.com",
         }  # Add more team members as needed
 
     team_report = analyze_contributors(contributors, my_team)
