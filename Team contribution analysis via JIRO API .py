@@ -110,16 +110,12 @@ def analyze_contributors(contributors, my_team):
 
     return team_contributions
 
-def main():
-    sprint = "Sprint 123"
-    # use JQL to frame only the issues from the desired sprint
-    jira_url = f"https://jira.your_company_domain.com/rest/api/2/search?jql=Sprint='{sprint}'&expand=changelog"
-    auth = ('username', 'password')  # Replace with actual credentials
-    
-    desired_data = 'Issues_20231229_040031.json'  # Replace with your desired file name
+def get_desired_data(jira_url, auth, filename):
+    '''Get all the issues we need either from the file or from the JIRA API.
+    If there were no such file then it creates a new file with a current time stamp'''
 
-    if os.path.exists(desired_data):
-        with open(desired_data, 'r') as file:
+    if os.path.exists(filename):
+        with open(filename, 'r') as file:
             all_issues = json.load(file)
     else:
         all_issues = []
@@ -138,6 +134,17 @@ def main():
                 print(f"An error occurred: {e}")
                 exit
         save_to_file(all_issues, 'Issues')
+    return all_issues
+
+def main():
+    sprint = "Sprint 123"
+    # use JQL to frame only the issues from the desired sprint
+    jira_url = f"https://jira.your_company_domain.com/rest/api/2/search?jql=Sprint='{sprint}'&expand=changelog"
+    auth = ('username', 'password')  # Replace with actual credentials
+    
+    desired_source_file = 'Issues_20231229_040031.json'  # Replace with your desired file name
+
+    all_issues = get_desired_data(jira_url, auth, desired_source_file)
 
     contributors = process_issues({'issues': all_issues})
     print(f"The total contributors: {len(contributors)}")
