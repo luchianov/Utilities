@@ -1,6 +1,6 @@
 # Utilities
 
-## Team contribution analysis via JIRO API.py
+## Team contribution analysis via JIRA API.py
 This utility traverses all the JIRA issues for a particular sprint, and builds an inverted list of contributors, and how active they were during the reported sprint.
 The utility saves all the issues it pulls from JIRA into a local file with a timestamp in its name, for auditing purposes and as a local repository. 
 You can re-run the analysis or build more reporting against those snapshots, later, without spending time and bandwidth on pulling the data from JIRA.
